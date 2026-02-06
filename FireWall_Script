@@ -1,0 +1,57 @@
+#FIRST
+nano allow_ports_firewall.sh
+
+
+
+#SECOND
+#!/bin/bash
+
+# Ensure script is run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root. Use sudo."
+  exit 1
+fi
+
+echo "Resetting firewall rules..."
+ufw --force reset
+
+echo "Setting default policies..."
+ufw default deny incoming
+ufw default allow outgoing
+
+echo
+echo "Enter ports to ALLOW (comma-separated)."
+echo "Examples:"
+echo "  22"
+echo "  22,80,443"
+echo "  3000,8000-8100"
+read -p "Allowed ports: " PORTS
+
+# Remove spaces
+PORTS=$(echo "$PORTS" | tr -d ' ')
+
+IFS=',' read -ra PORT_ARRAY <<< "$PORTS"
+
+for PORT in "${PORT_ARRAY[@]}"; do
+  if [[ "$PORT" =~ "-" ]]; then
+    echo "Allowing port range: $PORT"
+    ufw allow "$PORT"
+  else
+    echo "Allowing port: $PORT"
+    ufw allow "$PORT"
+  fi
+done
+
+echo
+echo "Enabling firewall..."
+ufw --force enable
+
+echo
+echo "Firewall status:"
+ufw status verbose
+
+
+
+#THIRD
+chmod +x allow_ports_firewall.sh
+#NOW THE SCRIPT CAN BE RUN
