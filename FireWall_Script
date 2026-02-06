@@ -54,4 +54,8 @@ ufw status verbose
 
 #THIRD
 chmod +x allow_ports_firewall.sh
-#NOW THE SCRIPT CAN BE RUN
+
+
+
+#NOW THE SCRIPT CAN BE RUN WITH THE FOLLOWING
+sudo bash ./allow_ports_firewall.sh
